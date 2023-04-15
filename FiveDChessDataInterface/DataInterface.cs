@@ -80,6 +80,9 @@ namespace FiveDChessDataInterface
         public MemoryLocationRestorable<int> MemLocClock3BaseTime { get; set; } // long timer
         public MemoryLocationRestorable<int> MemLocClock3Increment { get; set; }
 
+        public MemoryLocationRestorable<int> MemLocPoolDividers { get; set; }
+
+
 
 
 
@@ -292,6 +295,8 @@ namespace FiveDChessDataInterface
 
             this.MemLocClock3Increment = this.MemLocClock2Increment.WithOffset<int>(20);
             this.MemLocClock3BaseTime = this.MemLocClock2BaseTime.WithOffset<int>(12);
+
+            this.MemLocPoolDividers = this.MemLocClock2BaseTime.WithOffset<int>(12);
 
             var clocklocAddresses = new[] { this.MemLocClock1BaseTime, this.MemLocClock2BaseTime, this.MemLocClock3BaseTime, this.MemLocClock1Increment, this.MemLocClock2Increment, this.MemLocClock3Increment }
                 .Select(x => x.Location.ToInt64()).ToArray();

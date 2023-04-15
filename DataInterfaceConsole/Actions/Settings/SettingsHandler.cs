@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FiveDChessDataInterface.MemoryHelpers;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,8 @@ namespace DataInterfaceConsole.Actions.Settings
             AddSetting(new SettingsValuePrimitive<int?>("Clock2Increment", "Medium Timer Increment", "The increment of the second clock in seconds", null));
             AddSetting(new SettingsValuePrimitive<int?>("Clock3BaseTime", "Long Timer Base Time", "The base time of the third clock in total seconds", null));
             AddSetting(new SettingsValuePrimitive<int?>("Clock3Increment", "Long Timer Increment", "The increment of the third clock in seconds", null));
+            AddSetting(new SettingsValuePrimitive<int?>("PoolDividerLength", "Pool Divider Length", "The length of the pool divider in meters", null));
+
         }
 
 
@@ -74,48 +77,28 @@ namespace DataInterfaceConsole.Actions.Settings
                 if (ttanim != "ignore")
                     di.MemLocTimeTravelAnimationEnabled.SetValue(ttanim == "always_on" ? 1 : 0);
 
-                var sv1t = (this.settingsStore["Clock1BaseTime"] as SettingsValuePrimitive<int?>).Value;
-                if (sv1t.HasValue)
-                    di.MemLocClock1BaseTime.SetValue(sv1t.Value);
-                else
-                    di.MemLocClock1BaseTime.RestoreOriginal();
-
-                var sv1i = (this.settingsStore["Clock1Increment"] as SettingsValuePrimitive<int?>).Value;
-                if (sv1i.HasValue)
-                    di.MemLocClock1Increment.SetValue(sv1i.Value);
-                else
-                    di.MemLocClock1Increment.RestoreOriginal();
-
-                var sv2t = (this.settingsStore["Clock2BaseTime"] as SettingsValuePrimitive<int?>).Value;
-                if (sv2t.HasValue)
-                    di.MemLocClock2BaseTime.SetValue(sv2t.Value);
-                else
-                    di.MemLocClock2BaseTime.RestoreOriginal();
-
-                var sv2i = (this.settingsStore["Clock2Increment"] as SettingsValuePrimitive<int?>).Value;
-                if (sv2i.HasValue)
-                    di.MemLocClock2Increment.SetValue(sv2i.Value);
-                else
-                    di.MemLocClock2Increment.RestoreOriginal();
-
-                var sv3t = (this.settingsStore["Clock3BaseTime"] as SettingsValuePrimitive<int?>).Value;
-                if (sv3t.HasValue)
-                    di.MemLocClock3BaseTime.SetValue(sv3t.Value);
-                else
-                    di.MemLocClock3BaseTime.RestoreOriginal();
-
-                var sv3i = (this.settingsStore["Clock3Increment"] as SettingsValuePrimitive<int?>).Value;
-                if (sv3i.HasValue)
-                    di.MemLocClock3Increment.SetValue(sv3i.Value);
-                else
-                    di.MemLocClock3Increment.RestoreOriginal();
-
-
+                ApplyClockSetting("Clock1BaseTime", di.MemLocClock1BaseTime);
+                ApplyClockSetting("Clock1Increment", di.MemLocClock1Increment);
+                ApplyClockSetting("Clock2BaseTime", di.MemLocClock2BaseTime);
+                ApplyClockSetting("Clock2Increment", di.MemLocClock2Increment);
+                ApplyClockSetting("Clock3BaseTime", di.MemLocClock3BaseTime);
+                ApplyClockSetting("Clock3Increment", di.MemLocClock3Increment);
+                ApplyClockSetting("PoolDividerLength", di.MemLocPoolDividers);
 
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error while ticking settings handler:\n{ex.ToSanitizedString()}");
+            }
+
+            void ApplyClockSetting(string settingName, MemoryLocationRestorable<int> memLocation)
+            {
+                var settingValue = (this.settingsStore[settingName] as SettingsValuePrimitive<int?>).Value;
+
+                if (settingValue.HasValue)
+                    memLocation.SetValue(settingValue.Value);
+                else
+                    memLocation.RestoreOriginal();
             }
         }
     }

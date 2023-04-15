@@ -60,11 +60,22 @@ namespace DataInterfaceConsole.Actions
                             anyCrashed = true;
                         }
                     }
-                    WriteLineIndented($"{(i + 1).ToString().PadLeft((int)Math.Ceiling(Math.Log10(variants.Length)))}. {variants[i].Name} by {variants[i].Author}");
+
+                    string poolLabel = "";
+                    if (i % this.di.MemLocPoolDividers.GetValue() == 0)
+                    {
+                        poolLabel = $"\n Pool {(char)(((i / this.di.MemLocPoolDividers.GetValue()) + 1) + 64)}: \n\n  ";
+                    }
+
+                    if(this.di.MemLocPoolDividers == null || this.di.MemLocPoolDividers.GetValue() == 0)
+                    {
+                        poolLabel = "";
+                    }
+
+                    WriteLineIndented($"{poolLabel}{(i + 1).ToString().PadLeft((int)Math.Ceiling(Math.Log10(variants.Length)))}. {variants[i].Name} by {variants[i].Author}");
 
                     Console.ForegroundColor = originalConsoleColor;
                 }
-
 
                 if (anyCrashed)
                 {
